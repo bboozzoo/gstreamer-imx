@@ -58,6 +58,7 @@ struct _GstImxV4l2VideoSrc
 	gint input;
 	char *devicename;
 	int queue_size;
+	gboolean force_yuv422;
 };
 
 struct _GstImxV4l2VideoSrcClass
