@@ -275,7 +275,7 @@ static gboolean gst_imx_v4l2src_negotiate(GstBaseSrc *src)
 {
 	GstImxV4l2VideoSrc *v4l2src = GST_IMX_V4L2SRC(src);
 	GstCaps *caps;
-	const char *pixel_format = NULL;
+	gchar *pixel_format = NULL;
 	struct v4l2_format fmt;
 
 	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -286,10 +286,10 @@ static gboolean gst_imx_v4l2src_negotiate(GstBaseSrc *src)
 
 	switch (fmt.fmt.pix.pixelformat) {
 	case V4L2_PIX_FMT_YUV420: /* Special Case for handling YU12 */
-		pixel_format = "I420";
+		pixel_format = g_strdup("I420");
 		break;
 	default:
-		pixel_format = (char *)&fmt.fmt.pix.pixelformat;
+		pixel_format = g_strndup((char *)&fmt.fmt.pix.pixelformat, 4);
 	}
 
 	/* not much to negotiate;
@@ -303,6 +303,8 @@ static gboolean gst_imx_v4l2src_negotiate(GstBaseSrc *src)
 			NULL);
 
 	GST_INFO_OBJECT(src, "negotiated caps %" GST_PTR_FORMAT, (gpointer)caps);
+
+	g_free(pixel_format);
 
 	return gst_base_src_set_caps(src, caps);
 }
